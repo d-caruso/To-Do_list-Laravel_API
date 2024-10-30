@@ -13,5 +13,5 @@ To-Do list built with Laravel API
     - Update To-Do Item: Allow users to update the details of a specific To-Do item.
     - Delete To-Do Item: Enable users to delete a specific To-Do item.
     - Allow users to change the status of a  To-Do item.
-3. ### Profile Management
+3. ### Profile Management   
     - User Profile Management: Allow users to update their profile information (e.g., username, email).
