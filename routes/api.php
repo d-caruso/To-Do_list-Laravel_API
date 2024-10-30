@@ -7,38 +7,41 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+//auth endpoints
 Route::middleware(['auth:sanctum'])->group(function() {
     
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-    ->name('logout');
+         ->name('logout');
 
     Route::put('/user/password', [UserController::class, 'updatePassword'])
-    ->name('password.store');
+         ->name('password.store');
 
     Route::get('/user', function(Request $request) {
         return $request->user();
     })
-    ->name('user');
+         ->name('user');
 
     Route::post('/todos', [TodoController::class, 'store'])
-    ->name('todo.store');
+         ->name('todo.store');
 
     Route::get('/todos', [TodoController::class, 'index'])
-    ->name('todo.index');
+         ->name('todo.index');
 
     Route::put('/todos/{todo}', [TodoController::class, 'update'])
-    ->name('todo.update');
+         ->name('todo.update');
+
+    Route::delete('/todos/{todo}', [TodoController::class, 'destroy'])
+         ->name('todo.destroy');
 
 });
 
+//guest endpoints
 Route::middleware(['guest'])->group(function() {
     
     Route::post('/register', [RegisteredUserController::class, 'store'])
-    ->name('register');
+         ->name('register');
 
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-    ->name('login');
+         ->name('login');
 
 });
-
-//Route::apiResource('user', PostController::class)->middleware('auth:sanctum');

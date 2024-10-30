@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Todo;
 
-class StoreTodoRequest extends AbstractTodoRequest
+use Illuminate\Foundation\Http\FormRequest;
+
+class StoreTodoRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -11,12 +13,9 @@ class StoreTodoRequest extends AbstractTodoRequest
      */
     public function rules(): array
     {
-        $rules = [
+        return [
             'title' => 'required|string|max:50',
             'due_date' => 'sometimes|date_format:Y-m-d H:i:s',
         ];
-
-        // Merge parent and additional rules
-        return array_merge(parent::rules(), $rules);
     }
 }
