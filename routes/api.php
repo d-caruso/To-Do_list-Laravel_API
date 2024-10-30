@@ -7,11 +7,11 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-const CURRENT_VERSION = 'v1';
+$currentVersion = 'v1';
 
 //auth endpoints
 Route::
-    prefix(CURRENT_VERSION)->
+    prefix($currentVersion)->
     middleware(['auth:sanctum'])->
     group(function() {
     
@@ -42,7 +42,7 @@ Route::
 
 //guest endpoints
 Route::
-    prefix(CURRENT_VERSION)->
+    prefix($currentVersion)->
     middleware(['guest'])->
     group(function() {
     
