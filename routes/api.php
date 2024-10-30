@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\TodoController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +19,9 @@ Route::middleware(['auth:sanctum'])->group(function() {
         return $request->user();
     })
     ->name('user');
+
+    Route::post('/todo', [TodoController::class, 'store'])
+    ->name('todo.store');
 
 });
 
