@@ -21,8 +21,6 @@ class TodoRequest extends FormRequest
 
     public function authorize()
     {
-        $todo = $this->route('todo'); // Assuming you're using route model binding
-
         // Check if the user is authenticated //and is the owner of the post
         return request()->user() !== null;
     }
