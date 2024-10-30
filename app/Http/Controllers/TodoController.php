@@ -72,7 +72,7 @@ class TodoController extends Controller
             'user_id' => $request->user()->id,
         ]);
 
-        return response()->json($todo);
+        return response()->json($todo, 201);
     }
 
     /**
