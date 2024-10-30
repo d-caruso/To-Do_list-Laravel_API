@@ -7,8 +7,13 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+const CURRENT_VERSION = 'v1';
+
 //auth endpoints
-Route::middleware(['auth:sanctum'])->group(function() {
+Route::
+    prefix(CURRENT_VERSION)->
+    middleware(['auth:sanctum'])->
+    group(function() {
     
     Route::delete('/auths', [AuthenticatedSessionController::class, 'destroy'])
          ->name('auth.destroy');
@@ -36,7 +41,10 @@ Route::middleware(['auth:sanctum'])->group(function() {
 });
 
 //guest endpoints
-Route::middleware(['guest'])->group(function() {
+Route::
+    prefix(CURRENT_VERSION)->
+    middleware(['guest'])->
+    group(function() {
     
     Route::post('/users', [RegisteredUserController::class, 'store'])
          ->name('users.store');
