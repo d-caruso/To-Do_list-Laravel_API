@@ -2,13 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class Todo extends Model
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -19,10 +18,14 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'title',
+        'description',
+        'due_date',
+        'status',
+        'user_id'
     ];
+
+    protected $dates = ['due_date'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -30,8 +33,6 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
-        'remember_token',
     ];
 
     /**
@@ -42,18 +43,17 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'due_date' => 'datetime'
         ];
     }
 
     /**
-     * Get the Todos belonging to the User.
-     *
-     * @return Illuminate\Database\Eloquent\Relations\HasMany
+     * Get the User that owns the Todo
+     * 
+     * @return 
      */
-    public function todos(): HasMany
+    public function user(): BelongsTo
     {
-        return $this->hasMany(Todo::class);
+        return $this->belongsTo(User::class);
     }
 }
