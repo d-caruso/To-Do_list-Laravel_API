@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Todo\GetTodoRequest;
 use App\Http\Requests\Todo\StoreTodoRequest;
+use App\Http\Requests\Todo\TodoRequest;
 use App\Http\Requests\Todo\UpdateTodoRequest;
 use App\Models\Todo;
 use Illuminate\Http\Request;
@@ -13,49 +14,15 @@ class TodoController extends Controller
     const DEFAULT_PAGINATION = 10;
 
     /**
-     * Create a Todo.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreTodoRequest $request)
-    {
-        // Create a new Todo using validated data from the request
-        $todo = Todo::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'due_date' => now(),
-            'status' => $request->status,
-            'user_id' => $request->user_id,
-        ]);
-
-        return response()->json($todo);
-    }
-
-    /**
-     * Update the specified Todo.
-     *
-     * @param  Request  $request
-     * @param  Todo  $todo
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateTodoRequest $request, Todo $todo)
-    {
-        $filteredData = $request->except(['id', 'user_id', 'created_at', 'updated_at']);
-        // Update the Todo with the validated data
-        $todo->update($filteredData);
-
-        return response()->json($todo);
-    }
-
-    /**
      * Display a listing of the Todos.
      *
+     * @param  GetTodoRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function index(GetTodoRequest $request)
     {
         // Get the user ID from the request
-        $userId = $request->query('user_id');
+        $userId = $request->user()->id;
 
         // Get the 'per_page' query parameter or set a default value
         $perPage = $request->query('per_page', TodoController::DEFAULT_PAGINATION);
@@ -86,5 +53,73 @@ class TodoController extends Controller
         $todos = $query->paginate($perPage, ['*'], 'page', $pageNum);
 
         return response()->json($todos);
+    }
+
+    /**
+     * Create a Todo.
+     *
+     * @param  StoreTodoRequest  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(StoreTodoRequest $request)
+    {
+        // Create a new Todo using validated data from the request
+        $todo = Todo::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'due_date' => now(),
+            'status' => $request->status,
+            'user_id' => $request->user()->id,
+        ]);
+
+        return response()->json($todo);
+    }
+
+    /**
+     * Update the specified Todo.
+     *
+     * @param  UpdateTodoRequest  $request
+     * @param  Todo  $todo
+     * @return \Illuminate\Http\Response
+     */
+    public function update(UpdateTodoRequest $request, Todo $todo)
+    {
+        // Get the authenticated user from the request
+        $userId = $request->user()->id;
+        
+        if ($todo->user_id !== $userId) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $filteredData = $request->except(['id', 'user_id', 'created_at', 'updated_at']);
+        // Update the Todo with the validated data
+        $todo->update($filteredData);
+
+        return response()->json($todo);
+    }
+
+    /**
+     * Delete the specified Todo
+     *
+     * @param  TodoRequest  $request
+     * @param Post $post The post to delete.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    
+    function destroy(Request $request, Todo $todo)
+    {
+        // Get the authenticated user from the request
+        $userId = $request->user()->id;
+
+        // Check if the authenticated user is the owner of the todo
+        if ($todo->user_id !== $userId) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        // Delete the todo
+        $todo->delete();
+
+        // Return a response
+        return response()->json(['message' => 'Todo deleted successfully'], 200);
     }
 }

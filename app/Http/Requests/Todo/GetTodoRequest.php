@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Todo;
 
-class GetTodoRequest extends AbstractTodoRequest
+use Illuminate\Foundation\Http\FormRequest;
+
+class GetTodoRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -11,15 +13,11 @@ class GetTodoRequest extends AbstractTodoRequest
      */
     public function rules(): array
     {
-        // Define additional or overriding rules
-        $rules = [
+        return [
             // Optional status filter
             'status' => 'sometimes|in:pending,completed',
             // Optional sort by due date direction
             'sort_by_due_date' => 'sometimes|in:asc,desc',
         ];
-
-        // Merge parent and additional rules
-        return array_merge(parent::rules(), $rules);
     }
 }
