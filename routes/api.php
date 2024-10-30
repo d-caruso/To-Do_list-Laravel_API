@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Route;
 //auth endpoints
 Route::middleware(['auth:sanctum'])->group(function() {
     
-    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-         ->name('logout');
+    Route::delete('/auths', [AuthenticatedSessionController::class, 'destroy'])
+         ->name('auth.destroy');
 
     Route::put('/user/password', [UserController::class, 'updatePassword'])
          ->name('password.store');
@@ -38,10 +38,10 @@ Route::middleware(['auth:sanctum'])->group(function() {
 //guest endpoints
 Route::middleware(['guest'])->group(function() {
     
-    Route::post('/register', [RegisteredUserController::class, 'store'])
-         ->name('register');
+    Route::post('/users', [RegisteredUserController::class, 'store'])
+         ->name('users.store');
 
-    Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-         ->name('login');
+    Route::post('/auths', [AuthenticatedSessionController::class, 'store'])
+         ->name('auth.store');
 
 });
