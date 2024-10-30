@@ -7,7 +7,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-$currentVersion = 'v1';
+$currentVersion = env('API_CURRENT_VERSION');
 
 //auth endpoints
 Route::
@@ -15,7 +15,7 @@ Route::
     middleware(['auth:sanctum'])->
     group(function() {
     
-    Route::delete('/auths', [AuthenticatedSessionController::class, 'destroy'])
+    Route::delete('/auth', [AuthenticatedSessionController::class, 'destroy'])
          ->name('auth.destroy');
 
     Route::put('/user/password', [UserController::class, 'updatePassword'])
@@ -49,7 +49,7 @@ Route::
     Route::post('/users', [RegisteredUserController::class, 'store'])
          ->name('users.store');
 
-    Route::post('/auths', [AuthenticatedSessionController::class, 'store'])
+    Route::post('/auth', [AuthenticatedSessionController::class, 'store'])
          ->name('auth.store');
 
 });

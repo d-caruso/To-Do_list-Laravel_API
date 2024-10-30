@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    /**
+     * Handle a Password Update request.
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
     public function updatePassword(UpdatePasswordRequest $request)
     {
         $user = $request->user();
