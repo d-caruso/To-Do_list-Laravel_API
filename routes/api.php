@@ -26,6 +26,9 @@ Route::middleware(['auth:sanctum'])->group(function() {
     Route::get('/todos', [TodoController::class, 'index'])
     ->name('todo.index');
 
+    Route::put('/todos/{todo}', [TodoController::class, 'update'])
+    ->name('todo.update');
+
 });
 
 Route::middleware(['guest'])->group(function() {

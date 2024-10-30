@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Todo\TodoRequest;
+use App\Http\Requests\Todo\GetTodoRequest;
+use App\Http\Requests\Todo\StoreTodoRequest;
+use App\Http\Requests\Todo\UpdateTodoRequest;
 use App\Models\Todo;
 use Illuminate\Http\Request;
 
@@ -10,20 +12,39 @@ class TodoController extends Controller
 {
     const DEFAULT_PAGINATION = 10;
 
-    public function store(TodoRequest $request)
+    /**
+     * Create a Todo.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function store(StoreTodoRequest $request)
     {
-        $user = $request->user();
-        
         // Create a new Todo using validated data from the request
         $todo = Todo::create([
             'title' => $request->title,
             'description' => $request->description,
             'due_date' => now(),
             'status' => $request->status,
-            'user_id' => $request->user()->id, // Set the user_id to the authenticated user's ID
+            'user_id' => $request->user_id,
         ]);
 
-        return response()->json(['message' => 'Todo updated successfully.']);
+        return response()->json($todo);
+    }
+
+    /**
+     * Update the specified Todo.
+     *
+     * @param  Request  $request
+     * @param  Todo  $todo
+     * @return \Illuminate\Http\Response
+     */
+    public function update(UpdateTodoRequest $request, Todo $todo)
+    {
+        $filteredData = $request->except(['id', 'user_id', 'created_at', 'updated_at']);
+        // Update the Todo with the validated data
+        $todo->update($filteredData);
+
+        return response()->json($todo);
     }
 
     /**
@@ -31,25 +52,10 @@ class TodoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(GetTodoRequest $request)
     {
-        // Validate the user_id query parameter
-        $request->validate([
-            // Ensure the user_id exists in the users table
-            'user_id' => 'required|exists:users,id',
-            // Optional status filter
-            'status' => 'sometimes|in:pending,completed',
-            // Optional sort by due date direction
-            'sort_by_due_date' => 'sometimes|in:asc,desc',
-        ]);
-
         // Get the user ID from the request
         $userId = $request->query('user_id');
-
-        // Check if the authenticated user can access the specified user's todos
-        if (request()->user()->id !== (int) $userId) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
 
         // Get the 'per_page' query parameter or set a default value
         $perPage = $request->query('per_page', TodoController::DEFAULT_PAGINATION);
@@ -62,7 +68,6 @@ class TodoController extends Controller
 
         // Get the optional 'sort_by_due_date' parameter for due_date
         $sort_by_due_date = $request->query('sort_by_due_date');
-
 
         // Build the query for todos
         $query = Todo::where('user_id', $userId);
